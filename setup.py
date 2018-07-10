@@ -23,13 +23,13 @@ extensions = [
 ]
 
 setup(
-    name="pyvoro",
+    name="pyvoro-mmalahe",
     version="1.3.3",
     description="2D and 3D Voronoi tessellations: a python entry point for the voro++ library.",
     author="Joe Jordan",
     author_email="joe.jordan@imperial.ac.uk",
-    url="https://github.com/joe-jordan/pyvoro",
-    download_url="https://github.com/joe-jordan/pyvoro/tarball/v1.3.3",
+    url="https://github.com/mmalahe/pyvoro",
+    #download_url="https://github.com/joe-jordan/pyvoro/tarball/v1.3.3",
     packages=["pyvoro",],
     package_dir={"pyvoro": "pyvoro"},
     ext_modules=extensions,
