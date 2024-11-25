@@ -10,7 +10,9 @@
 
 import setuptools
 from setuptools import setup, Extension
-
+# Read the long description from the README file
+with open("README.md", "r") as fh:
+    long_description = fh.read()
 # fall back to provided cpp file if Cython is not found
 extensions = [
     Extension("pyvoro.voroplusplus",
@@ -23,12 +25,12 @@ extensions = [
 ]
 
 setup(
-    name="pyvoro-mmalahe",
-    version="1.3.4",
+    name="pyvoro-bazan",
+    version="1.0.0",
     description="2D and 3D Voronoi tessellations: a python entry point for the voro++ library.",
     author="Joe Jordan",
     author_email="joe.jordan@imperial.ac.uk",
-    url="https://github.com/mmalahe/pyvoro",
+    url="https://github.com/siyahkarga/pyvoro",
     #download_url="https://github.com/joe-jordan/pyvoro/tarball/v1.3.4",
     packages=["pyvoro",],
     package_dir={"pyvoro": "pyvoro"},
@@ -40,7 +42,8 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
         "Intended Audience :: Science/Research",
         "Operating System :: POSIX :: Linux",
-        "Programming Language :: Python :: 3",
+	"Operating System :: Microsoft :: Windows",  # Add Windows support
+	"Operating System :: MacOS",                  # Add macOS support
         "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: BSD License",
     ],
