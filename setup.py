@@ -27,7 +27,7 @@ extensions = [
 
 setup(
     name="pyvoro-bazan",
-    version="1.0.0",
+    version="1.0.1",
     description="2D and 3D Voronoi tessellations: a python entry point for the voro++ library.",
     author="Joe Jordan",
     author_email="joe.jordan@imperial.ac.uk",
