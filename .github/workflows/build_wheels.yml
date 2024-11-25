@@ -44,7 +44,7 @@ jobs:
 
       - name: Upload wheels to GitHub Releases (optional)
         if: success() && github.event_name == 'push'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: wheels
           path: dist/**/*.whl  # Tüm .whl dosyalarını yükleyin
