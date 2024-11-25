@@ -46,6 +46,11 @@ jobs:
           echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> $GITHUB_ENV  # Add Homebrew to PATH
           eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
           brew install pkgutil  # Install pkgutil (Homebrew üzerinden)
+          brew install pkg-config  # Ensure pkg-config is also installed
+      - name: Verify pkgutil installation
+        if: runner.os == 'macOS'
+        run: |
+          which pkgutil  # Verify pkgutil is in the PATH
       - name: Build wheels
         run: |
           cibuildwheel --output-dir dist --platform ${{ matrix.os == 'macos-latest' && 'macos' || matrix.os }}  # Build wheels for the specified platform
