@@ -43,30 +43,35 @@ jobs:
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
 
-      - name: Check for pkgutil and update PATH
+      - name: Install Xcode Command Line Tools
+        if: runner.os == 'macOS'
+        run: |
+          xcode-select --install || true
+          sudo xcode-select --switch /Library/Developer/CommandLineTools
+
+      - name: Find pkgutil and update PATH
         if: runner.os == 'macOS'
         run: |
           pkgutil_path=$(find /usr -name pkgutil 2>/dev/null)
-          if [ -z "$pkgutil_path" ]; then
-            echo "pkgutil not found. Installing Xcode Command Line Tools..."
-            xcode-select --install || true
-            sudo xcode-select --switch /Library/Developer/CommandLineTools
-            pkgutil_path=$(find /usr -name pkgutil 2>/dev/null)
-          fi
           if [ -n "$pkgutil_path" ]; then
             echo "pkgutil found at: $pkgutil_path"
             echo "$(dirname $pkgutil_path)" >> $GITHUB_PATH
           else
-            echo "Error: pkgutil still not found after installation attempt"
+            echo "Error: pkgutil not found"
             exit 1
           fi
-          echo "Updated PATH: $PATH"
+
+      - name: Update PATH for macOS
+        if: runner.os == 'macOS'
+        run: |
+          echo "/usr/bin:/usr/sbin:/bin:/sbin" >> $GITHUB_PATH
 
       - name: Build wheels
         env:
           CIBW_BUILD: cp311-*
         run: |
-          which pkgutil
+          echo "PATH: $PATH"
+          which pkgutil || echo "pkgutil not found in PATH"
           cibuildwheel --output-dir dist --platform ${{ matrix.os == 'macos-latest' && 'macos' || matrix.os }}
 
       - name: Upload wheels to GitHub Releases (optional)
