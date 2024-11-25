@@ -10,67 +10,67 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest  # This defines the platform for the job (running on Ubuntu)
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: [3.11]  # Specify the Python version to use
+        python-version: [3.11]
         include:
-          - os: ubuntu-latest  # Ubuntu platform for the build
-          - os: windows-latest  # Windows platform for the build
-          - os: macos-latest  # Use 'macos-latest' for cibuildwheel
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3  # Checkout the source code using the latest version of the action
+        uses: actions/checkout@v3
 
       - name: Set up Node.js
-        uses: actions/setup-node@v3  # Set up Node.js
+        uses: actions/setup-node@v3
         with:
-          node-version: '20'  # Use Node.js version 20 by default
+          node-version: '20'
 
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: ${{ matrix.python-version }}  # Set up Python using the version from the matrix
+          python-version: ${{ matrix.python-version }}
 
       - name: Install dependencies
         run: |
-          python -m pip install --upgrade pip  # Upgrade pip to the latest version
-          pip install cibuildwheel==2.22.0  # Install a specific version of cibuildwheel
+          python -m pip install --upgrade pip
+          pip install cibuildwheel==2.22.0
 
       - name: Install additional dependencies on Windows (optional)
-        if: runner.os == 'Windows'  # Only run this step on Windows
+        if: runner.os == 'Windows'
         run: |
-          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'  # Install CMake on Windows
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
 
-      - name: Install Xcode Command Line Tools on macOS (optional)
+      - name: Check for pkgutil and install if necessary
         if: runner.os == 'macOS'
         run: |
-          xcode-select --install  # Install Xcode command line tools
+          if ! command -v pkgutil &> /dev/null; then
+            echo "pkgutil not found. Installing Xcode Command Line Tools..."
+            xcode-select --install || true
+            sudo xcode-select --switch /Library/Developer/CommandLineTools
+          else
+            echo "pkgutil is already installed"
+          fi
+          echo "pkgutil location: $(which pkgutil)"
+          echo $PATH
 
-      - name: Install Homebrew and pkgutil dependencies on macOS (optional)
+      - name: Update PATH
         if: runner.os == 'macOS'
         run: |
-          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"  # Install Homebrew
-          echo 'eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"' >> $GITHUB_ENV  # Add Homebrew to PATH
-          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
-          brew install pkgutil pkg-config  # Install pkgutil and pkg-config
-
-      - name: Verify pkgutil installation
-        if: runner.os == 'macOS'
-        run: |
-          which pkgutil  # Verify pkgutil is in the PATH
+          echo "/usr/sbin:/usr/bin:/sbin:/bin" >> $GITHUB_PATH
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp311-*  # Build only for Python 3.11
+          CIBW_BUILD: cp311-*
         run: |
-          cibuildwheel --output-dir dist --platform ${{ matrix.os == 'macos-latest' && 'macos' || matrix.os }}  # Build wheels for the specified platform
+          cibuildwheel --output-dir dist --platform ${{ matrix.os == 'macos-latest' && 'macos' || matrix.os }}
 
       - name: Upload wheels to GitHub Releases (optional)
-        if: success() && github.event_name == 'push'  # Upload artifacts only on push events
+        if: success() && github.event_name == 'push'
         uses: actions/upload-artifact@v3
         with:
-          name: wheels  # Name of the artifact to upload
-          path: dist/*.whl  # Upload all .whl files from the dist directory
+          name: wheels
+          path: dist/*.whl
 
