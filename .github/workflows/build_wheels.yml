@@ -46,7 +46,7 @@ jobs:
         env:
           CIBW_BUILD: cp311-*
         run: |
-          cibuildwheel --output-dir dist --platform ${{ matrix.os }}
+          cibuildwheel --output-dir dist --platform ${{ matrix.os == 'windows-latest' && 'windows' || 'linux' }}
 
       - name: Upload wheels to GitHub Releases (optional)
         if: success() && github.event_name == 'push'
