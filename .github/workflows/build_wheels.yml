@@ -17,7 +17,6 @@ jobs:
         include:
           - os: ubuntu-latest
           - os: windows-latest
-          - os: macos-latest
 
     steps:
       - name: Checkout code
@@ -43,36 +42,11 @@ jobs:
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'
 
-      - name: Install Xcode Command Line Tools
-        if: runner.os == 'macOS'
-        run: |
-          xcode-select --install || true
-          sudo xcode-select --switch /Library/Developer/CommandLineTools
-
-      - name: Find pkgutil and update PATH
-        if: runner.os == 'macOS'
-        run: |
-          pkgutil_path=$(find /usr -name pkgutil 2>/dev/null)
-          if [ -n "$pkgutil_path" ]; then
-            echo "pkgutil found at: $pkgutil_path"
-            echo "$(dirname $pkgutil_path)" >> $GITHUB_PATH
-          else
-            echo "Error: pkgutil not found"
-            exit 1
-          fi
-
-      - name: Update PATH for macOS
-        if: runner.os == 'macOS'
-        run: |
-          echo "/usr/bin:/usr/sbin:/bin:/sbin" >> $GITHUB_PATH
-
       - name: Build wheels
         env:
           CIBW_BUILD: cp311-*
         run: |
-          echo "PATH: $PATH"
-          which pkgutil || echo "pkgutil not found in PATH"
-          cibuildwheel --output-dir dist --platform ${{ matrix.os == 'macos-latest' && 'macos' || matrix.os }}
+          cibuildwheel --output-dir dist --platform ${{ matrix.os }}
 
       - name: Upload wheels to GitHub Releases (optional)
         if: success() && github.event_name == 'push'
