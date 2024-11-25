@@ -27,7 +27,7 @@ extensions = [
 
 setup(
     name="pyvoro-bazan",
-    version="1.0.2",
+    version="1.0.3",
     description="2D and 3D Voronoi tessellations: a python entry point for the voro++ library.",
     author="Joe Jordan",
     author_email="joe.jordan@imperial.ac.uk",
@@ -45,7 +45,10 @@ setup(
         "Operating System :: POSIX :: Linux",
         "Operating System :: Microsoft :: Windows",  # Add Windows support
         "Operating System :: MacOS",                  # Add macOS support
+        "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
+        "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: BSD License",
     ],
     test_suite="test",

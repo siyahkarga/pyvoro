@@ -10,8 +10,14 @@ on:
 
 jobs:
   build_windows:
-    # Build Python 3.12 wheels for Windows
     runs-on: windows-latest
+    strategy:
+      matrix:
+        python-version:
+          - { version: "3.10", cibw: "cp310-*" }
+          - { version: "3.11", cibw: "cp311-*" }
+          - { version: "3.12", cibw: "cp312-*" }
+          - { version: "3.13", cibw: "cp313-*" }
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -19,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.12.6
+          python-version: ${{ matrix.python-version.version }}
 
       - name: Install dependencies
         run: |
@@ -28,21 +34,26 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp312-* # Build only for Python 3.12
+          CIBW_BUILD: ${{ matrix.python-version.cibw }}
           CIBW_ARCHS_WINDOWS: AMD64
         run: |
           cibuildwheel --output-dir dist
 
       - name: Upload Windows wheels
-        # Upload built wheels as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: windows-wheels-${{ github.sha }} # Unique name with commit ID
+          name: windows-wheels-${{ github.sha }}
           path: dist/*.whl
 
   build_linux:
-    # Build Python 3.11 wheels for Linux
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version:
+          - { version: "3.10", cibw: "cp310-*" }
+          - { version: "3.11", cibw: "cp311-*" }
+          - { version: "3.12", cibw: "cp312-*" }
+          - { version: "3.13", cibw: "cp313-*" }
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -50,7 +61,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.python-version.version }}
 
       - name: Install dependencies
         run: |
@@ -59,19 +70,25 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp311-* # Build only for Python 3.11
+          CIBW_BUILD: ${{ matrix.python-version.cibw }}
         run: |
           cibuildwheel --output-dir dist --platform linux
 
       - name: Upload Linux wheels
         uses: actions/upload-artifact@v3
         with:
-          name: linux-wheels-${{ github.sha }} # Unique name with commit ID
+          name: linux-wheels-${{ github.sha }}
           path: dist/*.whl
 
   build_macos:
-    # Build Python 3.11 wheels for macOS
     runs-on: macos-latest
+    strategy:
+      matrix:
+        python-version:
+          - { version: "3.10", cibw: "cp310-*" }
+          - { version: "3.11", cibw: "cp311-*" }
+          - { version: "3.12", cibw: "cp312-*" }
+          - { version: "3.13", cibw: "cp313-*" }
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -79,7 +96,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: 3.11
+          python-version: ${{ matrix.python-version.version }}
 
       - name: Install dependencies
         run: |
@@ -88,21 +105,20 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp311-* # Build only for Python 3.11
-          CIBW_ARCHS_MACOS: x86_64 arm64 # Specify architectures for macOS
+          CIBW_BUILD: ${{ matrix.python-version.cibw }}
+          CIBW_ARCHS_MACOS: x86_64 arm64
         run: |
           cibuildwheel --output-dir dist
 
       - name: Upload macOS wheels
         uses: actions/upload-artifact@v3
         with:
-          name: macos-wheels-${{ github.sha }} # Unique name with commit ID
+          name: macos-wheels-${{ github.sha }}
           path: dist/*.whl
 
   upload_to_testpypi:
-    # Upload all wheels to TestPyPI after all builds complete
     runs-on: ubuntu-latest
-    needs: [build_windows, build_linux, build_macos] # Wait for all build jobs
+    needs: [build_windows, build_linux, build_macos]
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -129,7 +145,7 @@ jobs:
       - name: Upload wheels to TestPyPI
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/ # Upload to TestPyPI
-          username: __token__ # Token-based authentication
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }} # Token stored in GitHub Secrets
-          packages-dir: dist # Directory containing built wheel files
+          repository-url: https://test.pypi.org/legacy/
+          username: __token__
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }}
+          packages-dir: dist
