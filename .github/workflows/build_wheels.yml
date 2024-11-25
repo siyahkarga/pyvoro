@@ -1,0 +1,51 @@
+name: Build and distribute Python package
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest  # Bu iş akışını başlatacak platform (Ubuntu üzerinde çalışacak)
+    strategy:
+      matrix:
+        python-version: [3.8, 3.9, 3.10, 3.11]  # Python sürümlerini belirleyin
+        include:
+          - os: ubuntu-latest
+          - os: windows-latest
+          - os: macos-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2  # Kaynak kodu çekmek için
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install cibuildwheel  # CIBuildWheel'ı yükleyin
+
+      - name: Install additional dependencies on Windows (optional)
+        if: runner.os == 'Windows'
+        run: |
+          choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'  # Windows için cmake ekleyin
+
+      - name: Build wheels
+        run: |
+          cibuildwheel --output-dir dist --platform ${{ matrix.os }}  # `--platform` ile platform belirtiliyor
+          
+      - name: Upload wheels to GitHub Releases (optional)
+        if: success() && github.event_name == 'push'
+        uses: actions/upload-artifact@v2
+        with:
+          name: wheels
+          path: dist/*
+
