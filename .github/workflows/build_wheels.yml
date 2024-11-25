@@ -3,10 +3,10 @@ name: Build and distribute Python package
 on:
   push:
     branches:
-      - master  # Trigger the action on pushes to the master branch
+      - master
   pull_request:
     branches:
-      - master  # Trigger the action on pull requests targeting the master branch
+      - master
 
 jobs:
   build:
@@ -43,10 +43,16 @@ jobs:
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'  # Install CMake on Windows
 
-      - name: Install pkgutil on macOS (optional)
-        if: runner.os == 'macos'  # Only run this step on macOS
+      - name: Install Xcode Command Line Tools on macOS (optional)
+        if: runner.os == 'macos'
         run: |
-          sudo softwareupdate --install --all  # Install required system software updates on macOS to resolve pkgutil issue
+          xcode-select --install  # Install Xcode command line tools
+
+      - name: Install Homebrew and pkgutil dependencies on macOS (optional)
+        if: runner.os == 'macos'
+        run: |
+          /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"  # Homebrew yükleyin
+          brew install pkgutil  # pkgutil'ı yükleyin (Homebrew üzerinden)
 
       - name: Build wheels
         run: |
