@@ -48,7 +48,7 @@ jobs:
           brew install pkgutil  # Install pkgutil (Homebrew üzerinden)
       - name: Build wheels
         run: |
-          cibuildwheel --output-dir dist --platform ${{ matrix.os }}  # Build wheels for the specified platform
+          cibuildwheel --output-dir dist --platform ${{ matrix.os == 'macos-latest' && 'macos' || matrix.os }}  # Build wheels for the specified platform
       - name: Upload wheels to GitHub Releases (optional)
         if: success() && github.event_name == 'push'  # Upload artifacts only on push events
         uses: actions/upload-artifact@v3
