@@ -122,9 +122,9 @@ jobs:
           path: ./dist  
 
       - name: Upload wheels to TestPyPI
-        uses: ppa/gh-action-pypi-publish@release/v1
+        uses: pypa/gh-action-pypi-publish@release/v1  # Correct action usage here.
         with:
-          repository-url: https://test.pypi.org/legacy/  # URL for TestPyPI.
+          repository-url: https://test.pypi.org/legacy/  # Correct URL for uploading to TestPyPI.
           username: __token__                             # Use __token__ for API token authentication.
           password: ${{ secrets.TEST_PYPI_API_TOKEN }}   # Token stored in GitHub Secrets.
           packages-dir: dist                              # Directory containing all wheel files.
