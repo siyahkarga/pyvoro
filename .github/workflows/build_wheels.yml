@@ -21,10 +21,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3  # Kaynak kodu çekmek için
+        uses: actions/checkout@v3  # Kaynak kodu çekmek için en güncel sürüm
 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -41,11 +41,12 @@ jobs:
       - name: Build wheels
         run: |
           cibuildwheel --output-dir dist --platform ${{ matrix.os }}  # `--platform` ile platform belirtiliyor
-          
+
       - name: Upload wheels to GitHub Releases (optional)
         if: success() && github.event_name == 'push'
         uses: actions/upload-artifact@v2
         with:
           name: wheels
-          path: dist/*
+          path: dist/**/*.whl  # Tüm .whl dosyalarını yükleyin
+
 
