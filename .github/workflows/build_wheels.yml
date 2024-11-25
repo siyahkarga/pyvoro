@@ -3,10 +3,10 @@ name: Build and distribute Python package
 on:
   push:
     branches:
-      - master
+      - master  # Trigger the action on pushes to the master branch
   pull_request:
     branches:
-      - master
+      - master  # Trigger the action on pull requests targeting the master branch
 
 jobs:
   build:
@@ -15,8 +15,8 @@ jobs:
       matrix:
         python-version: [3.11]  # Specify the Python versions to use
         include:
-          - os: ubuntu-latest
-          - os: windows-latest
+          - os: ubuntu-latest  # Ubuntu platform for the build
+          - os: windows-latest  # Windows platform for the build
           - os: macos  # Use 'macos' instead of 'macos-latest' for cibuildwheel
 
     steps:
@@ -42,6 +42,11 @@ jobs:
         if: runner.os == 'Windows'  # Only run this step on Windows
         run: |
           choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System'  # Install CMake on Windows
+
+      - name: Install pkgutil on macOS (optional)
+        if: runner.os == 'macos'  # Only run this step on macOS
+        run: |
+          sudo softwareupdate --install --all  # Install required system software updates on macOS to resolve pkgutil issue
 
       - name: Build wheels
         run: |
