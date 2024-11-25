@@ -1,52 +1,50 @@
-pyvoro
-======
+# pyvoro
 
 3D Voronoi tessellations: a python entry point for the [voro++ library](http://math.lbl.gov/voro++/)
 
 **Recently Added Features:**
 
-*Released on PyPI* - thanks to a contribution from @ansobolev, you can now install the project with
+_Released on PyPI_ - thanks to a contribution from @ansobolev, you can now install the project with
 `pip` - just type `pip install pyvoro`, with sudo if that's your thing.
 
-*support for numpy arrays* - thanks to a contribution from @christopherpoole, you can now pass in
+_support for numpy arrays_ - thanks to a contribution from @christopherpoole, you can now pass in
 a 2D (Nx3 or Nx2) numpy array.
 
-*2D helper*, which translates the results of a 3D tesselation of points on the plane back into
+_2D helper_, which translates the results of a 3D tesselation of points on the plane back into
 2D vectors and cells (see below for an example.)
 
-*Radical (weighted) option*, which weights the voronoi cell sizes according to a set of supplied
+_Radical (weighted) option_, which weights the voronoi cell sizes according to a set of supplied
 radius values.
 
-*periodic boundary support*, note that each cell is returned in the frame of reference of its source
+_periodic boundary support_, note that each cell is returned in the frame of reference of its source
 point, so points can (and will) be outside the bounding box.
 
-Installation
-------------
+## Installation
 
 Recommended - installation via `pip`:
 
-    pip install pyvoro
+    pip install pyvoro-bazan
 
-Installation from source is the same as for any other python module. Issuing 
-  
+Installation from source is the same as for any other python module. Issuing
+
     python setup.py install
-    
-will install pyvoro system-wide, while 
+
+will install pyvoro system-wide, while
 
     python setup.py install --user
 
-will install it only for the current user. Any 
-[other](https://pythonhosted.org/an_example_pypi_project/setuptools.html#using-setup-py)  `setup.py` keywords 
-can also be used, including 
- 
+will install it only for the current user. Any
+[other](https://pythonhosted.org/an_example_pypi_project/setuptools.html#using-setup-py) `setup.py` keywords
+can also be used, including
+
     python setup.py develop
-    
+
 to install the package in 'development' mode. Alternatively, if you want all the dependencies pulled in automatically,  
 you can still use `pip`:
 
     pip install -e .
 
-`-e` option makes pip install package from source in development mode. 
+`-e` option makes pip install package from source in development mode.
 
 You can then use the code with:
 
@@ -54,8 +52,7 @@ You can then use the code with:
     pyvoro.compute_voronoi( ... )
     pyvoro.compute_2d_voronoi( ... )
 
-Example:
---------
+## Example:
 
 ```python
 import pyvoro
@@ -73,7 +70,7 @@ returning an array of voronoi cells in the form:
 { # (note, this cell is not calculated using the above example)
   'volume': 6.07031902214448,
   'faces': [
-    {'adjacent_cell': 1, 'vertices': [1, 5, 8, 3]}, 
+    {'adjacent_cell': 1, 'vertices': [1, 5, 8, 3]},
     {'adjacent_cell': -3, 'vertices': [1, 0, 2, 6, 5]},
     {'adjacent_cell': -5, 'vertices': [1, 3, 9, 7, 0]},
     {'adjacent_cell': 146, 'vertices': [2, 4, 11, 10, 6]},
@@ -121,11 +118,10 @@ there are three at the corner of a box, specifically ids `1`, `3` and `5`, (the
 `x_i = 0` boundaries, represented with negative ids hence `-1`, `-3` and `-5` --
 this is voro++'s conventional way of referring to boundary interfaces.)
 
-Initially only non-radical tessellation, and computing *all* information 
+Initially only non-radical tessellation, and computing _all_ information
 (including cell adjacency). Other code paths may be added later.
 
-2D tessellation
----------------
+## 2D tessellation
 
 You can now run a simpler function to get the 2D cells around your points, with all the details
 handled for you:
@@ -140,7 +136,7 @@ cells = pyvoro.compute_2d_voronoi(
 )
 ```
 
-the output follows the same schema as the 3D for now, since this is not as annoying as having a 
+the output follows the same schema as the 3D for now, since this is not as annoying as having a
 whole new schema to handle. The adjacency is now a bit redundant since the cell is a polygon and the
 vertices are returned in the correct order. The cells look like a list of these:
 
@@ -175,8 +171,9 @@ vertices are returned in the correct order. The cells look like a list of these:
 }
 ```
 
-*(note that the edges will now be indexed -1 to -4, and the 'volume' key is in fact the area.)*
+_(note that the edges will now be indexed -1 to -4, and the 'volume' key is in fact the area.)_
 
 NOTES:
-* on compilation: if a cython .pyx file is being compiled in C++ mode, all cython-visible code must be compiled "as c++" - this will not be compatible with any C functions declared `extern "C" { ... }`. In this library, the author just used c++ functions for everything, in order to be able to utilise the c++ `std::vector<T>` classes to represent the (ridiculously non-specific) geometry of a Voronoi cell.
-* A checkout of voro++ itself is included in this project. moving `setup.py` and the `pyvoro` folder into a newer checkout of the voro++ source may well also work, but if any of the definitions used are changed then it will fail to compile. by all means open a support issue if you need this library to work with a newer version of voro++; better still fix it and send me a pull request :)
+
+- on compilation: if a cython .pyx file is being compiled in C++ mode, all cython-visible code must be compiled "as c++" - this will not be compatible with any C functions declared `extern "C" { ... }`. In this library, the author just used c++ functions for everything, in order to be able to utilise the c++ `std::vector<T>` classes to represent the (ridiculously non-specific) geometry of a Voronoi cell.
+- A checkout of voro++ itself is included in this project. moving `setup.py` and the `pyvoro` folder into a newer checkout of the voro++ source may well also work, but if any of the definitions used are changed then it will fail to compile. by all means open a support issue if you need this library to work with a newer version of voro++; better still fix it and send me a pull request :)

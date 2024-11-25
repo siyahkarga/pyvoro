@@ -10,6 +10,7 @@ on:
 
 jobs:
   build_windows:
+    # Build Python 3.12 wheels for Windows
     runs-on: windows-latest
     steps:
       - name: Checkout code
@@ -27,18 +28,20 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp311-*
+          CIBW_BUILD: cp312-* # Build only for Python 3.12
           CIBW_ARCHS_WINDOWS: AMD64
         run: |
           cibuildwheel --output-dir dist
 
       - name: Upload Windows wheels
+        # Upload built wheels as artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: windows-wheels-${{ github.sha }} # Make the name unique with commit ID
+          name: windows-wheels-${{ github.sha }} # Unique name with commit ID
           path: dist/*.whl
 
   build_linux:
+    # Build Python 3.11 wheels for Linux
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -56,17 +59,18 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp311-*
+          CIBW_BUILD: cp311-* # Build only for Python 3.11
         run: |
           cibuildwheel --output-dir dist --platform linux
 
       - name: Upload Linux wheels
         uses: actions/upload-artifact@v3
         with:
-          name: linux-wheels-${{ github.sha }} # Make the name unique with commit ID
+          name: linux-wheels-${{ github.sha }} # Unique name with commit ID
           path: dist/*.whl
 
   build_macos:
+    # Build Python 3.11 wheels for macOS
     runs-on: macos-latest
     steps:
       - name: Checkout code
@@ -84,47 +88,48 @@ jobs:
 
       - name: Build wheels
         env:
-          CIBW_BUILD: cp311-*
-          CIBW_ARCHS_MACOS: x86_64 arm64 # Specify architectures for macOS.
+          CIBW_BUILD: cp311-* # Build only for Python 3.11
+          CIBW_ARCHS_MACOS: x86_64 arm64 # Specify architectures for macOS
         run: |
           cibuildwheel --output-dir dist
 
       - name: Upload macOS wheels
         uses: actions/upload-artifact@v3
         with:
-          name: macos-wheels-${{ github.sha }} # Make the name unique with commit ID
+          name: macos-wheels-${{ github.sha }} # Unique name with commit ID
           path: dist/*.whl
 
   upload_to_testpypi:
+    # Upload all wheels to TestPyPI after all builds complete
     runs-on: ubuntu-latest
-    needs: [build_windows, build_linux, build_macos] # Wait for all build jobs to complete.
+    needs: [build_windows, build_linux, build_macos] # Wait for all build jobs
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # Download artifacts for Windows, Linux, and macOS.
+      # Download artifacts for Windows, Linux, and macOS
       - name: Download Windows wheels
         uses: actions/download-artifact@v3
         with:
-          name: windows-wheels-${{ github.sha }} # Download using commit ID.
+          name: windows-wheels-${{ github.sha }}
           path: ./dist
 
       - name: Download Linux wheels
         uses: actions/download-artifact@v3
         with:
-          name: linux-wheels-${{ github.sha }} # Download using commit ID.
+          name: linux-wheels-${{ github.sha }}
           path: ./dist
 
       - name: Download macOS wheels
         uses: actions/download-artifact@v3
         with:
-          name: macos-wheels-${{ github.sha }} # Download using commit ID.
+          name: macos-wheels-${{ github.sha }}
           path: ./dist
 
       - name: Upload wheels to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1 # Correct action usage here.
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          repository-url: https://test.pypi.org/legacy/ # Correct URL for uploading to TestPyPI.
-          username: __token__ # Use __token__ for API token authentication.
-          password: ${{ secrets.TEST_PYPI_API_TOKEN }} # Token stored in GitHub Secrets.
-          packages-dir: dist # Directory containing all wheel files.
+          repository-url: https://test.pypi.org/legacy/ # Upload to TestPyPI
+          username: __token__ # Token-based authentication
+          password: ${{ secrets.TEST_PYPI_API_TOKEN }} # Token stored in GitHub Secrets
+          packages-dir: dist # Directory containing built wheel files
