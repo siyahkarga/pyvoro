@@ -11,7 +11,8 @@
 import setuptools
 from setuptools import setup, Extension
 # Read the long description from the README file
-with open("README.md", "r") as fh:
+# Read the long description from the README file
+with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 # fall back to provided cpp file if Cython is not found
 extensions = [
@@ -42,10 +43,12 @@ setup(
         "Topic :: Scientific/Engineering :: Physics",
         "Intended Audience :: Science/Research",
         "Operating System :: POSIX :: Linux",
-	"Operating System :: Microsoft :: Windows",  # Add Windows support
-	"Operating System :: MacOS",                  # Add macOS support
+        "Operating System :: Microsoft :: Windows",  # Add Windows support
+        "Operating System :: MacOS",                  # Add macOS support
         "Programming Language :: Python :: 3.11",
         "License :: OSI Approved :: BSD License",
     ],
     test_suite="test",
+    long_description=long_description,
+    long_description_content_type="text/markdown",
 )
