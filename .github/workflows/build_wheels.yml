@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest  # Bu iş akışını başlatacak platform (Ubuntu üzerinde çalışacak)
     strategy:
       matrix:
-        python-version: [3.9, 3.10, 3.11]  # Python sürümlerini belirleyin
+        python-version: [3.11]  # Python sürümlerini belirleyin
         include:
           - os: ubuntu-latest
           - os: windows-latest
