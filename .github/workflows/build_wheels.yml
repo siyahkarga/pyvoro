@@ -18,9 +18,9 @@ jobs:
           - { version: "3.13", cibw: "cp313-*" }
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version.version }}
       - name: Install dependencies
@@ -34,7 +34,7 @@ jobs:
         run: |
           cibuildwheel --output-dir dist
       - name: Upload Windows wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: windows-wheels-${{ matrix.python-version.version }}-${{ github.sha }}
           path: dist/*.whl
@@ -49,9 +49,9 @@ jobs:
           - { version: "3.13", cibw: "cp313-*" }
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version.version }}
       - name: Install dependencies
@@ -64,7 +64,7 @@ jobs:
         run: |
           cibuildwheel --output-dir dist --platform linux
       - name: Upload Linux wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: linux-wheels-${{ matrix.python-version.version }}-${{ github.sha }}
           path: dist/*.whl
@@ -79,9 +79,9 @@ jobs:
           - { version: "3.13", cibw: "cp313-*" }
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Set up Python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version.version }}
       - name: Install dependencies
@@ -95,7 +95,7 @@ jobs:
         run: |
           cibuildwheel --output-dir dist
       - name: Upload macOS wheels
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: macos-wheels-${{ matrix.python-version.version }}-${{ github.sha }}
           path: dist/*.whl
@@ -104,64 +104,64 @@ jobs:
     needs: [build_windows, build_linux, build_macos]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Download Windows wheels (3.10)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.10-${{ github.sha }}
           path: ./dist
       - name: Download Windows wheels (3.11)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.11-${{ github.sha }}
           path: ./dist
       - name: Download Windows wheels (3.12)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.12-${{ github.sha }}
           path: ./dist
       - name: Download Windows wheels (3.13)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.13-${{ github.sha }}
           path: ./dist
       - name: Download Linux wheels (3.10)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.10-${{ github.sha }}
           path: ./dist
       - name: Download Linux wheels (3.11)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.11-${{ github.sha }}
           path: ./dist
       - name: Download Linux wheels (3.12)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.12-${{ github.sha }}
           path: ./dist
       - name: Download Linux wheels (3.13)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.13-${{ github.sha }}
           path: ./dist
       - name: Download macOS wheels (3.10)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.10-${{ github.sha }}
           path: ./dist
       - name: Download macOS wheels (3.11)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.11-${{ github.sha }}
           path: ./dist
       - name: Download macOS wheels (3.12)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.12-${{ github.sha }}
           path: ./dist
       - name: Download macOS wheels (3.13)
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.13-${{ github.sha }}
           path: ./dist
