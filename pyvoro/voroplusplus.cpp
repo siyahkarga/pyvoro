@@ -8684,7 +8684,7 @@ static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
                 unsigned char *bytes = (unsigned char *)&val;
                 ret = _PyLong_AsByteArray((PyLongObject *)v,
                                            bytes, sizeof(val),
-                                           is_little, !is_unsigned);
+                                           is_little, !is_unsigned, 1);
 #else
                 PyObject *stepval = NULL, *mask = NULL, *shift = NULL;
                 int bits, remaining_bits, is_negative = 0;
