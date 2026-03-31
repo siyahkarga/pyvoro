@@ -31,7 +31,7 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.python-version.cibw }}
           CIBW_ARCHS_WINDOWS: AMD64
-          CIBW_BEFORE_BUILD: pip install "cython>=3.0"
+          CIBW_BEFORE_BUILD: pip install "cython>=3.1"
         run: |
           cibuildwheel --output-dir dist
       - name: Upload Windows wheels
@@ -62,7 +62,7 @@ jobs:
       - name: Build wheels
         env:
           CIBW_BUILD: ${{ matrix.python-version.cibw }}
-          CIBW_BEFORE_BUILD: pip install "cython>=3.0"
+          CIBW_BEFORE_BUILD: pip install "cython>=3.1"
         run: |
           cibuildwheel --output-dir dist --platform linux
       - name: Upload Linux wheels
@@ -94,7 +94,7 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.python-version.cibw }}
           CIBW_ARCHS_MACOS: x86_64 arm64
-          CIBW_BEFORE_BUILD: pip install "cython>=3.0"
+          CIBW_BEFORE_BUILD: pip install "cython>=3.1"
         run: |
           cibuildwheel --output-dir dist
       - name: Upload macOS wheels
