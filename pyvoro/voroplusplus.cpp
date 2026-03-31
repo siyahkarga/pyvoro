@@ -8356,9 +8356,15 @@ static CYTHON_INLINE int __Pyx_PyInt_As_int(PyObject *x) {
 #if !(CYTHON_COMPILING_IN_PYPY || CYTHON_COMPILING_IN_LIMITED_API) || defined(_PyLong_AsByteArray)
                 int one = 1; int is_little = (int)*(unsigned char *)&one;
                 unsigned char *bytes = (unsigned char *)&val;
-                ret = _PyLong_AsByteArray((PyLongObject *)v,
-                                           bytes, sizeof(val),
-                                           is_little, !is_unsigned, 1);
+                #if PY_VERSION_HEX >= 0x030D0000
+                                ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                                           bytes, sizeof(val),
+                                                           is_little, !is_unsigned, 1);
+                #else
+                                ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                                           bytes, sizeof(val),
+                                                           is_little, !is_unsigned);
+#endif
 #else
                 PyObject *stepval = NULL, *mask = NULL, *shift = NULL;
                 int bits, remaining_bits, is_negative = 0;
@@ -8682,9 +8688,15 @@ static CYTHON_INLINE long __Pyx_PyInt_As_long(PyObject *x) {
 #if !(CYTHON_COMPILING_IN_PYPY || CYTHON_COMPILING_IN_LIMITED_API) || defined(_PyLong_AsByteArray)
                 int one = 1; int is_little = (int)*(unsigned char *)&one;
                 unsigned char *bytes = (unsigned char *)&val;
-                ret = _PyLong_AsByteArray((PyLongObject *)v,
-                                           bytes, sizeof(val),
-                                           is_little, !is_unsigned, 1);
+                #if PY_VERSION_HEX >= 0x030D0000
+                                ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                                           bytes, sizeof(val),
+                                                           is_little, !is_unsigned, 1);
+                #else
+                                ret = _PyLong_AsByteArray((PyLongObject *)v,
+                                                           bytes, sizeof(val),
+                                                           is_little, !is_unsigned);
+#endif
 #else
                 PyObject *stepval = NULL, *mask = NULL, *shift = NULL;
                 int bits, remaining_bits, is_negative = 0;
