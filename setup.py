@@ -1,32 +1,19 @@
-import setuptools
 from setuptools import setup, Extension
-from setuptools.command.build_ext import build_ext
-import sys, os
+from Cython.Build import cythonize
+import os
 
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
-try:
-    from Cython.Build import cythonize
-    USE_CYTHON = True
-except ImportError:
-    USE_CYTHON = False
-
-ext = ".pyx" if USE_CYTHON else ".cpp"
-
 extensions = [
     Extension("pyvoro.voroplusplus",
-              sources=["pyvoro/voroplusplus" + ext,
+              sources=["pyvoro/voroplusplus.pyx",
                        "pyvoro/vpp.cpp",
                        "src/voro++.cc"],
               include_dirs=["src"],
               language="c++",
               )
 ]
-
-if USE_CYTHON:
-    from Cython.Build import cythonize
-    extensions = cythonize(extensions, language_level="3")
 
 setup(
     name="pyvoro-bazan",
@@ -35,9 +22,9 @@ setup(
     author="Joe Jordan",
     author_email="joe.jordan@imperial.ac.uk",
     url="https://github.com/siyahkarga/pyvoro",
-    packages=["pyvoro",],
+    packages=["pyvoro"],
     package_dir={"pyvoro": "pyvoro"},
-    ext_modules=extensions,
+    ext_modules=cythonize(extensions, language_level="3"),
     keywords=["geometry", "mathematics", "Voronoi"],
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -46,9 +33,7 @@ setup(
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
         "Programming Language :: Python :: 3.13",
-        "License :: OSI Approved :: BSD License",
     ],
-    test_suite="test",
     long_description=long_description,
     long_description_content_type="text/markdown",
 )
