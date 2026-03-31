@@ -1,23 +1,22 @@
-# 
-# setup.py : pyvoro python interface to voro++
-# 
-# this extension to voro++ is released under the original modified BSD license
-# and constitutes an Extension to the original project.
-#
-# Copyright (c) Joe Jordan 2012
-# contact: <joe.jordan@imperial.ac.uk> or <tehwalrus@h2j9k.org>
-#
-
 import setuptools
 from setuptools import setup, Extension
-# Read the long description from the README file
-# Read the long description from the README file
+from setuptools.command.build_ext import build_ext
+import sys, os
+
 with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
-# fall back to provided cpp file if Cython is not found
+
+try:
+    from Cython.Build import cythonize
+    USE_CYTHON = True
+except ImportError:
+    USE_CYTHON = False
+
+ext = ".pyx" if USE_CYTHON else ".cpp"
+
 extensions = [
     Extension("pyvoro.voroplusplus",
-              sources=["pyvoro/voroplusplus.cpp",
+              sources=["pyvoro/voroplusplus" + ext,
                        "pyvoro/vpp.cpp",
                        "src/voro++.cc"],
               include_dirs=["src"],
@@ -25,14 +24,17 @@ extensions = [
               )
 ]
 
+if USE_CYTHON:
+    from Cython.Build import cythonize
+    extensions = cythonize(extensions, language_level="3")
+
 setup(
     name="pyvoro-bazan",
-    version="1.0.3",
+    version="1.0.4",
     description="2D and 3D Voronoi tessellations: a python entry point for the voro++ library.",
     author="Joe Jordan",
     author_email="joe.jordan@imperial.ac.uk",
     url="https://github.com/siyahkarga/pyvoro",
-    #download_url="https://github.com/joe-jordan/pyvoro/tarball/v1.3.4",
     packages=["pyvoro",],
     package_dir={"pyvoro": "pyvoro"},
     ext_modules=extensions,
@@ -40,14 +42,10 @@ setup(
     classifiers=[
         "Development Status :: 5 - Production/Stable",
         "Topic :: Scientific/Engineering :: Mathematics",
-        "Topic :: Scientific/Engineering :: Physics",
-        "Intended Audience :: Science/Research",
-        "Operating System :: POSIX :: Linux",
-        "Operating System :: Microsoft :: Windows",  # Add Windows support
-        "Operating System :: MacOS",                  # Add macOS support
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "License :: OSI Approved :: BSD License",
     ],
     test_suite="test",
