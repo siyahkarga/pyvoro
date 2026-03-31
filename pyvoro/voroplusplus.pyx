@@ -209,4 +209,3 @@ Output format is a list of cells as follows:
   free(zs)
   free(rs)
   return py_cells
-
