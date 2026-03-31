@@ -1,3 +1,0 @@
-[build-system]
-requires = ["setuptools", "wheel", "cython>=3.1"]
-build-backend = "setuptools.backends.legacy:build"
