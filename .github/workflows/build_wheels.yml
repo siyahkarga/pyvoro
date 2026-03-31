@@ -6,7 +6,6 @@ on:
   pull_request:
     branches:
       - master
-
 jobs:
   build_windows:
     runs-on: windows-latest
@@ -18,23 +17,28 @@ jobs:
           - { version: "3.12", cibw: "cp312-*" }
           - { version: "3.13", cibw: "cp313-*" }
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version.version }}
-      - run: |
+      - name: Install dependencies
+        run: |
           python -m pip install --upgrade pip
           pip install cibuildwheel==2.22.0
       - name: Build wheels
         env:
           CIBW_BUILD: ${{ matrix.python-version.cibw }}
           CIBW_ARCHS_WINDOWS: AMD64
-        run: cibuildwheel --output-dir dist
-      - uses: actions/upload-artifact@v4
+          CIBW_BEFORE_BUILD: pip install "cython>=3.1"
+        run: |
+          cibuildwheel --output-dir dist
+      - name: Upload Windows wheels
+        uses: actions/upload-artifact@v4
         with:
           name: windows-wheels-${{ matrix.python-version.version }}-${{ github.sha }}
           path: dist/*.whl
-
   build_linux:
     runs-on: ubuntu-latest
     strategy:
@@ -45,22 +49,27 @@ jobs:
           - { version: "3.12", cibw: "cp312-*" }
           - { version: "3.13", cibw: "cp313-*" }
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version.version }}
-      - run: |
+      - name: Install dependencies
+        run: |
           python -m pip install --upgrade pip
           pip install cibuildwheel==2.22.0
       - name: Build wheels
         env:
           CIBW_BUILD: ${{ matrix.python-version.cibw }}
-        run: cibuildwheel --output-dir dist --platform linux
-      - uses: actions/upload-artifact@v4
+          CIBW_BEFORE_BUILD: pip install "cython>=3.1"
+        run: |
+          cibuildwheel --output-dir dist --platform linux
+      - name: Upload Linux wheels
+        uses: actions/upload-artifact@v4
         with:
           name: linux-wheels-${{ matrix.python-version.version }}-${{ github.sha }}
           path: dist/*.whl
-
   build_macos:
     runs-on: macos-latest
     strategy:
@@ -71,77 +80,96 @@ jobs:
           - { version: "3.12", cibw: "cp312-*" }
           - { version: "3.13", cibw: "cp313-*" }
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version.version }}
-      - run: |
+      - name: Install dependencies
+        run: |
           python -m pip install --upgrade pip
           pip install cibuildwheel==2.22.0
       - name: Build wheels
         env:
           CIBW_BUILD: ${{ matrix.python-version.cibw }}
           CIBW_ARCHS_MACOS: x86_64 arm64
-        run: cibuildwheel --output-dir dist
-      - uses: actions/upload-artifact@v4
+          CIBW_BEFORE_BUILD: pip install "cython>=3.1"
+        run: |
+          cibuildwheel --output-dir dist
+      - name: Upload macOS wheels
+        uses: actions/upload-artifact@v4
         with:
           name: macos-wheels-${{ matrix.python-version.version }}-${{ github.sha }}
           path: dist/*.whl
-
   upload_to_pypi:
     runs-on: ubuntu-latest
     needs: [build_windows, build_linux, build_macos]
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Download Windows wheels (3.10)
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.10-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Windows wheels (3.11)
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.11-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Windows wheels (3.12)
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.12-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Windows wheels (3.13)
+        uses: actions/download-artifact@v4
         with:
           name: windows-wheels-3.13-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Linux wheels (3.10)
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.10-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Linux wheels (3.11)
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.11-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Linux wheels (3.12)
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.12-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download Linux wheels (3.13)
+        uses: actions/download-artifact@v4
         with:
           name: linux-wheels-3.13-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download macOS wheels (3.10)
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.10-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download macOS wheels (3.11)
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.11-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download macOS wheels (3.12)
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.12-${{ github.sha }}
           path: ./dist
-      - uses: actions/download-artifact@v4
+      - name: Download macOS wheels (3.13)
+        uses: actions/download-artifact@v4
         with:
           name: macos-wheels-3.13-${{ github.sha }}
           path: ./dist
-      - uses: pypa/gh-action-pypi-publish@release/v1
+      - name: Upload wheels to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
         with:
           repository-url: https://upload.pypi.org/legacy/
           username: __token__
